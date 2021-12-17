@@ -182,7 +182,9 @@ public class KeycloakImportProvider {
         try {
             RealmImport realmImport = objectMapper.readValue(importConfig, RealmImport.class);
 
-            realmImport.getUsers().forEach(userRepresentation -> userRepresentation.setUsername(userRepresentation.getUsername().toLowerCase()));
+            if (realmImport.getUsers() != null) {
+                realmImport.getUsers().forEach(userRepresentation -> userRepresentation.setUsername(userRepresentation.getUsername().toLowerCase()));
+            }
 
             String checksum = ChecksumUtil.checksum(objectMapper.writeValueAsBytes(realmImport));
 
