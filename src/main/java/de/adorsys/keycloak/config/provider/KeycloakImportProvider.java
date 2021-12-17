@@ -179,10 +179,13 @@ public class KeycloakImportProvider {
             importConfig = interpolator.replace(importConfig);
         }
 
-        String checksum = ChecksumUtil.checksum(importConfig.getBytes(StandardCharsets.UTF_8));
-
         try {
             RealmImport realmImport = objectMapper.readValue(importConfig, RealmImport.class);
+
+            realmImport.getUsers().forEach(userRepresentation -> userRepresentation.setUsername(userRepresentation.getUsername().toLowerCase()));
+
+            String checksum = ChecksumUtil.checksum(objectMapper.writeValueAsBytes(realmImport));
+
             realmImport.setChecksum(checksum);
 
             return realmImport;
