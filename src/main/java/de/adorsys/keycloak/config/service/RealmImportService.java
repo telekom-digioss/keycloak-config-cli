@@ -147,6 +147,7 @@ public class RealmImportService {
     private void updateRealmIfNecessary(RealmImport realmImport) {
         if (importProperties.isForce() || checksumService.hasToBeUpdated(realmImport)) {
             setEventsEnabledWorkaround(realmImport);
+            setEventsExpirationWorkaround(realmImport);
             updateRealm(realmImport);
         } else {
             logger.debug(
@@ -163,6 +164,14 @@ public class RealmImportService {
 
         Boolean existingEventsEnabled = realmRepository.get(realmImport.getRealm()).isEventsEnabled();
         realmImport.setEventsEnabled(existingEventsEnabled);
+    }
+
+    private void setEventsExpirationWorkaround(RealmImport realmImport) {
+        // same as https://github.com/adorsys/keycloak-config-cli/issues/338
+        if (realmImport.getEventsExpiration() != null) return;
+
+        Long existingEventsExpiration = realmRepository.get(realmImport.getRealm()).getEventsExpiration();
+        realmImport.setEventsExpiration(existingEventsExpiration);
     }
 
     private void createRealm(RealmImport realmImport) {
