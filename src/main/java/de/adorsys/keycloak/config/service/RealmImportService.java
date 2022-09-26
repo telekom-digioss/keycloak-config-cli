@@ -171,7 +171,9 @@ public class RealmImportService {
         if (realmImport.getEventsExpiration() != null) return;
 
         Long existingEventsExpiration = realmRepository.get(realmImport.getRealm()).getEventsExpiration();
-        realmImport.setEventsExpiration(existingEventsExpiration);
+        if (existingEventsExpiration != null) {
+            realmImport.setEventsExpiration(existingEventsExpiration);
+        }
     }
 
     private void createRealm(RealmImport realmImport) {
